@@ -40,11 +40,11 @@ def send_mess(chat, text):
     return response
 
 map_info = MapTracker()
+bot = Bot(token)
 
 def main():
     print("start")
 
-    bot = Bot(token)
     MessageLoop(bot, handle).run_as_thread()
 
     cars_info = map_info.get_cars_info()
@@ -54,13 +54,21 @@ def main():
     while True:
         sleep(1)
 
+def process_cars(cars_in_range):
+    print("going to send message with", cars_in_range)
+    bot.sendMessage(current_chat_id, 'prepare to cars')
+    bot.sendMessage(current_chat_id, cars_in_range)
+
+current_user_id = None
+current_chat_id = None
 
 def handle(message):
+    current_chat_id = message['chat']['id']
     user_id = message['from']['id']
-    user_location = 'location' in message
-    if user_location == True:
-        session = UserSession(map_info, user_id, user_location)
-        session.start()
+    if 'location' in message:
+        current_user_id = user_id
+        session = UserSession(map_info, user_id, message['location'])
+        session.start(process_cars)
     else:
        print('no location found in message', message)
 
