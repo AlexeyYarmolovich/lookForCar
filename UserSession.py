@@ -1,18 +1,31 @@
 import geopy.distance
+import asyncio
+import datetime
 
 
 class UserSession:
-    def __init__(self, map_info, chat_id, user_location):
+    def __init__(self, map_info, chat_id, callback):
         self.map_info = map_info
         self.chat_id = chat_id
-        self.last_location = (user_location['longitude'], user_location['latitude'])
-
-
-    def start(self, callback):
-        cars = self.map_info.get_cars_info()
         self.callback = callback
-        self.find_cars_in_range(self.last_location, 5, cars)
+        self.last_location = None
 
+    def set_last_location(self, location):
+        self.last_location = (location['longitude'], location['latitude'])
+
+    def start(self):
+        if self.last_location is None:
+            self.callback(self.chat_id, 'send me your location please')
+
+        asyncio.run(self.start_check_cycle())
+
+    async def start_check_cycle(self):
+        interval = 30
+        distance = 5
+        while True:
+            cars = self.map_info.get_cars_info()
+            self.find_cars_in_range(self.last_location, distance, cars)
+            await asyncio.sleep(interval)
 
     def find_cars_in_range(self, user_location, search_range, cars):
         cars_in_range = []
