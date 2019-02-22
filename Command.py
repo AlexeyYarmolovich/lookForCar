@@ -13,6 +13,8 @@ class Command:
             return Command.create_command_from_text(message['text'])
         elif 'location' in message:
             return Command.create_command_from_location(message['location'])
+        else:
+            return Command.create_unknown_command(message)
 
     @classmethod
     def create_command_from_text(cls, text):
@@ -25,6 +27,7 @@ class Command:
             command.type = Command.STOP
         else:
             command.type = Command.UNKNOWN
+            command.properties['text'] = text
         return command
 
     @classmethod
@@ -32,4 +35,11 @@ class Command:
         command = Command()
         command.type = Command.SET_LOCATION
         command.properties['location'] = (location['longitude'], location['latitude'])
+        return command
+
+    @classmethod
+    def create_unknown_command(cls, message):
+        command = Command()
+        command.type = Command.UNKNOWN
+        command.properties['message'] = message
         return command

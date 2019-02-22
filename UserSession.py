@@ -9,25 +9,32 @@ class UserSession:
         self.chat_id = chat_id
         self.callback = callback
         self.last_location = None
+        self.started = False
 
-    def set_last_location(self, location):
-        self.last_location = (location['longitude'], location['latitude'])
+    async def set_last_location(self, location):
+        self.last_location = location
 
-    def start(self):
+        if not self.started:
+            self.started = True
+            await self.start()
+
+    async def start(self):
         if self.last_location is None:
-            self.callback(self.chat_id, 'send me your location please')
-
-        asyncio.run(self.start_check_cycle())
+            await self.callback(self.chat_id, 'send me your location please')
+        else:
+            self.started = True
+            await self.start_check_cycle()
 
     async def start_check_cycle(self):
+        print('start_check_cycle begin')
         interval = 30
-        distance = 5
+        distance = 3
         while True:
             cars = self.map_info.get_cars_info()
-            self.find_cars_in_range(self.last_location, distance, cars)
+            await self.find_cars_in_range(self.last_location, distance, cars)
             await asyncio.sleep(interval)
 
-    def find_cars_in_range(self, user_location, search_range, cars):
+    async def find_cars_in_range(self, user_location, search_range, cars):
         cars_in_range = []
         for car in cars:
             car_position = (car['Lon'], car['Lat'])
@@ -36,7 +43,7 @@ class UserSession:
                 cars_in_range.append({'car': car, 'distance': distance})
         if len(cars_in_range) > 0:
             readable_info = list(map(self.readable_info_for_car, cars_in_range))
-            self.callback(self.chat_id, readable_info)
+            await self.callback(self.chat_id, readable_info)
             print(readable_info)
 
     def readable_info_for_car(self, car_info):
