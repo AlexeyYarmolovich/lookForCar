@@ -18,6 +18,7 @@ class Command:
 
     @classmethod
     def create_command_from_text(cls, text):
+        text = text.lower()
         command = Command()
         if text == Command.INITIAL:
             command.type = Command.INITIAL
