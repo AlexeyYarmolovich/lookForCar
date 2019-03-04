@@ -7,7 +7,7 @@ from Command import Command
 import asyncio
 from telepot.aio.loop import MessageLoop
 
-
+print('that is the first print in the app')
 map_info = MapTracker()
 bot = Bot(sys.argv[1])
 active_sessions = {}
@@ -57,7 +57,7 @@ async def process_command(session, command):
 
 
 if __name__ == '__main__':
-
+    print('message loop created')
     loop = asyncio.get_event_loop()
     loop.create_task(MessageLoop(bot, {'chat': on_chat_message}).run_forever())
     loop.run_forever()
