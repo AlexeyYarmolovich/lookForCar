@@ -22,7 +22,13 @@ class Command:
         command = Command()
         if text == Command.INITIAL:
             command.type = Command.INITIAL
-        elif text == Command.START:
+        elif text.find(Command.START) == 0:
+            start_option = text.replace(Command.START, '')
+            try:
+                search_range = float(start_option)
+                command.properties['range'] = search_range
+            except:
+                pass
             command.type = Command.START
         elif text == Command.STOP:
             command.type = Command.STOP

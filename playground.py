@@ -1,7 +1,10 @@
 import asyncio
 from time import sleep
 import time
-
+list1 = [1,2,3]
+list2 = [4,5,6]
+list1.extend(list2)
+print(list1)
 
 a = 'd2ca393f-1c68-4e5c-afaf-c969e2de'
 

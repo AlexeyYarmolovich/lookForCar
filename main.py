@@ -41,14 +41,16 @@ async def process_command(session, command):
     print('received command: ', command.__dict__)
 
     if command.type == Command.UNKNOWN:
+        await send_message_response(session.chat_id, 'CHTO ETO ZA SLOVO')
         unknown_command_response()
     elif command.type == Command.INITIAL:
         await send_message_response(session.chat_id, 'hello my friend')
     elif command.type == Command.START:
-        await session.start()
+        await session.start(command.properties.get('range'))
     elif command.type == Command.SET_LOCATION:
         await session.set_last_location(command.properties['location'])
     elif command.type == Command.STOP:
+        await send_message_response(session.chat_id, 'ok say no more')
         session.stop()
         del active_sessions[session.chat_id]
 

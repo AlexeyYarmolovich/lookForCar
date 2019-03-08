@@ -13,6 +13,8 @@ class MapTracker:
     def load_cars_info(self):
         #print("started loading cars info", datetime.datetime.now())
         self._cars_info = requests.get('http://service.drivetime.by/api/cars').json()['cars']
+        vesuha_cars = requests.get('https://service.vezuha.club/api/cars').json()['cars']
+        self._cars_info.extend(vesuha_cars)
         self._last_load_date = datetime.datetime.now()
         #print("finished loading cars info", datetime.datetime.now())
 
