@@ -43,14 +43,14 @@ class UserSession:
             await self.start(self.search_range)
 
     async def start(self, search_range=None):
-        self.search_range = search_range if search_range is not None else 1.5
-
+        search_range = search_range if search_range is not None else 1.5
+        self.search_range = search_range
         if self.last_location is None:
             await self.send_message_callback(self.chat_id, 'send me your location please')
         else:
             self.started = True
             await self.send_message_callback(self.chat_id, 'starting with search range {}km'.format(search_range))
-            await self.start_check_cycle(search_range)
+            await self.start_check_cycle(self.search_range)
 
     def stop(self):
         self.started = False
